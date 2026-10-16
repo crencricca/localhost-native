@@ -13,7 +13,7 @@ Run from the repo root, with the main checkout on `main`. Shipping needs the `gh
 `factory/board.json` is `{ "jobs": [...] }`. Create it if it's missing. Rewrite the whole file every time a job changes stage or a verdict lands. The board and `factory/jobs/` are local state and are gitignored.
 
 ```json
-{ "id": "003-rate-limiting", "title": "Rate limiting", "branch": "factory/003-rate-limiting",
+{ "id": "003-rate-limiting", "title": "Add rate limiting", "branch": "factory/003-rate-limiting",
   "stage": "review", "round": 2, "pr": null,
   "reviews": { "security": "CHANGES", "ux": "PASS", "ui": "pending", "code": "PASS" },
   "history": [ { "security": "CHANGES", "ux": "CHANGES", "ui": "PASS", "code": "PASS" } ] }
@@ -23,7 +23,7 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 
 ## The loop
 
-1. **Job.** The id is the next three-digit number after the highest one in `factory/jobs/`, plus a short kebab slug, like `004-event-feed`. Create `factory/jobs/<id>/` and add the job at stage `spec`.
+1. **Job.** The id is the next three-digit number after the highest one in `factory/jobs/`, plus a short kebab slug, like `004-event-feed`. Create `factory/jobs/<id>/` and add the job at stage `spec`. The title is a short imperative summary like `Add event feed`, and it becomes the PR and commit title.
 2. **Spec.** Spawn `spec-writer` with the feature text and the job folder. Wait for `spec.md`, then set the stage to `spec-review` and stop. Refine the spec with the user in this session, editing `spec.md` as you agree. Build only on `/factory build <id>`.
 3. **Build.** Run `git pull --ff-only origin main`, then `git worktree add .claude/worktrees/<id> -b factory/<id> main`, then set the stage to `build`. Spawn `builder` named `builder-<id>` with the job id and folder. Wait for `build.md`.
 4. **Review.** Set `round` to n, create `round-<n>/`, set all four reviews to `pending` and the stage to `review`. Spawn `review-security`, `review-ux`, `review-ui` and `review-code` in parallel, each with the job id and the round folder. As each finishes, read the first line of its file and update the board.
@@ -36,9 +36,9 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 
 ## Ship
 
-**Open the PR.** Run `git push -u origin factory/<id>`. If `pr` is already set, that's all. Otherwise run `gh pr create --base main --head factory/<id> --title "<id>: <title>"` with `spec.md` and `decision.md` as the body. Save the URL as `pr` on the board.
+**Open the PR.** Run `git push -u origin factory/<id>`. If `pr` is already set, that's all. Otherwise run `gh pr create --base main --head factory/<id> --title "<title>"` with `spec.md` and `decision.md` as the body. Save the URL as `pr` on the board.
 
-**Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --merge --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`.
+**Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`.
 
 **Conflicts.** If `gh pr merge` fails on a conflict, run `/factory rework <id> Merge origin/main and resolve the conflicts`. After every successful merge, check each other job with an open PR using `gh pr view <pr> --json mergeable`, and rework every one that says `CONFLICTING` the same way.
 
