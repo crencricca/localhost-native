@@ -18,4 +18,6 @@ Repo: Expo SDK 57, React Native 0.86, TypeScript (strict), Expo Router with rout
 **When resumed for a round**
 Read every `review-*.md` in the round folder you're pointed at. Fix each CHANGES item, or explain why not if it's wrong. Re-run the checks and commit. Then append a `## Round <n>` section to `build.md` listing each item and what you did about it.
 
+If a note asks you to resolve conflicts, run `git fetch origin main && git merge origin/main` in the worktree. Resolve each conflict so both sides keep their behavior, re-run the checks, and commit the merge.
+
 You write only code in the worktree and `build.md`.

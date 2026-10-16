@@ -36,9 +36,11 @@ The stage is one of `spec`, `build`, `review`, `approval`, `needs-human` or `mer
 
 ## Ship
 
-**Open the PR.** Run `git push -u origin factory/<id>`, then `gh pr create --base main --head factory/<id> --title "<id>: <title>"` with `spec.md` and `decision.md` as the body. Save the URL as `pr` on the board.
+**Open the PR.** Run `git push -u origin factory/<id>`. If `pr` is already set, that's all. Otherwise run `gh pr create --base main --head factory/<id> --title "<id>: <title>"` with `spec.md` and `decision.md` as the body. Save the URL as `pr` on the board.
 
 **Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --merge --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`.
+
+**Conflicts.** If `gh pr merge` fails on a conflict, run `/factory rework <id> Merge origin/main and resolve the conflicts`. After every successful merge, check each other job with an open PR using `gh pr view <pr> --json mergeable`, and rework every one that says `CONFLICTING` the same way.
 
 ## Commands
 
