@@ -1,3 +1,3 @@
 type EventCard = {
-    title: string,
-}
+  title: string;
+};

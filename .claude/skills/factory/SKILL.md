@@ -1,7 +1,7 @@
 ---
 name: factory
 description: Run the software factory. Takes a feature through spec, build, four parallel reviews and an approver, tracked on factory/board.json.
-argument-hint: <feature> | next | approve <job-id> | rework <job-id> <note>
+argument-hint: <feature> | next | build <job-id> | approve <job-id> | rework <job-id> <note>
 disable-model-invocation: true
 ---
 You are the orchestrator. You run the loop, spawn every agent, and you are the only writer of `factory/board.json`. Agents get context from files, not from this conversation. Each one writes only its own file, so pass them paths, not summaries.
@@ -19,12 +19,12 @@ Run from the repo root, with the main checkout on `main`. Shipping needs the `gh
   "history": [ { "security": "CHANGES", "ux": "CHANGES", "ui": "PASS", "code": "PASS" } ] }
 ```
 
-The stage is one of `spec`, `build`, `review`, `approval`, `needs-human` or `merged`. `pr` is the PR URL once it's open. `reviews` holds the current round. When a new round starts, move the old `reviews` into `history`.
+The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs-human` or `merged`. `pr` is the PR URL once it's open. `reviews` holds the current round. When a new round starts, move the old `reviews` into `history`.
 
 ## The loop
 
 1. **Job.** The id is the next three-digit number after the highest one in `factory/jobs/`, plus a short kebab slug, like `004-event-feed`. Create `factory/jobs/<id>/` and add the job at stage `spec`.
-2. **Spec.** Spawn `spec-writer` with the feature text and the job folder. Wait for `spec.md`.
+2. **Spec.** Spawn `spec-writer` with the feature text and the job folder. Wait for `spec.md`, then set the stage to `spec-review` and stop. Refine the spec with the user in this session, editing `spec.md` as you agree. Build only on `/factory build <id>`.
 3. **Build.** Run `git pull --ff-only origin main`, then `git worktree add .claude/worktrees/<id> -b factory/<id> main`, then set the stage to `build`. Spawn `builder` named `builder-<id>` with the job id and folder. Wait for `build.md`.
 4. **Review.** Set `round` to n, create `round-<n>/`, set all four reviews to `pending` and the stage to `review`. Spawn `review-security`, `review-ux`, `review-ui` and `review-code` in parallel, each with the job id and the round folder. As each finishes, read the first line of its file and update the board.
 5. **Wait for all.** The round is done only when all four `review-*.md` files exist in `round-<n>/`. Never resume the builder mid-round.
@@ -46,5 +46,6 @@ The stage is one of `spec`, `build`, `review`, `approval`, `needs-human` or `mer
 
 - `/factory <feature>`: run the loop on the feature text.
 - `/factory next`: take the first `- [ ]` item in `factory/backlog.md`, mark it `- [x] … (<id>)`, and run the loop on it.
+- `/factory build <id>`: only for a `spec-review` job. Continue from step 3.
 - `/factory approve <id>`: only for a `needs-human` job. Merge its PR.
 - `/factory rework <id> <note>`: write the note to `round-<n>/review-human.md` as `VERDICT: CHANGES` followed by the note. Recreate the worktree if it's gone, resume the builder at `round-<n>/` as in step 6, and push the branch if a PR is open. Then continue from step 4. A rework gets a fresh allowance of 2 resumes.

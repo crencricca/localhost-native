@@ -19,7 +19,7 @@
   header span { color: var(--muted); font-size: 12px; }
   #human:empty { display: none; }
   #human { margin: 8px 24px 0; padding: 12px; border: 2px solid var(--human); border-radius: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
-  #human::before { content: "Needs human · review the PR, then /factory approve <id>"; width: 100%; color: var(--human); font-weight: 600; font-size: 12px; }
+  #human::before { content: "Needs human"; width: 100%; color: var(--human); font-weight: 600; font-size: 12px; }
   #board { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)); gap: 12px; padding: 16px 24px; overflow-x: auto; }
   .col h2 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
@@ -52,6 +52,10 @@
 <script>
 const STAGES = [["spec", "Spec"], ["build", "Build"], ["review", "Review"], ["approval", "Approver"], ["merged", "Shipped"]];
 const REVIEWERS = ["security", "ux", "ui", "code"];
+const NEXT = {
+  "spec-review": id => `refine spec, then /factory build ${id}`,
+  "needs-human": id => `review the PR, then /factory approve ${id}`,
+};
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 function chips(n, reviews) {
@@ -64,6 +68,7 @@ function card(job) {
   return `<div class="card" data-id="${esc(job.id)}">
     <div class="id">${esc(job.id)}</div>
     <div class="meta">${esc(job.title || "")}${job.round ? ` · round ${job.round}` : ""}${job.pr ? ` · <a href="${esc(job.pr)}" target="_blank">PR</a>` : ""}</div>
+    ${NEXT[job.stage] ? `<div class="meta">${NEXT[job.stage](esc(job.id))}</div>` : ""}
     ${rounds.length ? `<div class="rounds">${rounds.map((r, i) => chips(i + 1, r)).join("")}</div>` : ""}
   </div>`;
 }
@@ -73,7 +78,7 @@ async function refresh() {
   try {
     jobs = (await (await fetch("board.json", { cache: "no-store" })).json()).jobs || [];
   } catch { jobs = []; }
-  human.innerHTML = jobs.filter(j => j.stage === "needs-human").map(card).join("");
+  human.innerHTML = jobs.filter(j => ["spec-review", "needs-human"].includes(j.stage)).map(card).join("");
   board.innerHTML = jobs.length ? STAGES.map(([key, label]) => `<div class="col"><h2>${label}</h2>
     ${jobs.filter(j => j.stage === key).map(card).join("")}</div>`).join("")
     : `<div class="empty">No jobs yet. Run <code>/factory &lt;feature&gt;</code> or <code>/factory next</code>.</div>`;
