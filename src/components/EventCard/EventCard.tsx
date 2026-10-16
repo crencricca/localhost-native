@@ -1,0 +1,3 @@
+type EventCard = {
+    title: string,
+}
