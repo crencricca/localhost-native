@@ -42,3 +42,5 @@ yarn-error.*
 
 # factory builder worktrees
 .claude/worktrees/
+factory/board.json
+factory/jobs/

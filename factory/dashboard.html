@@ -19,7 +19,7 @@
   header span { color: var(--muted); font-size: 12px; }
   #human:empty { display: none; }
   #human { margin: 8px 24px 0; padding: 12px; border: 2px solid var(--human); border-radius: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
-  #human::before { content: "Needs human · /factory approve <id>"; width: 100%; color: var(--human); font-weight: 600; font-size: 12px; }
+  #human::before { content: "Needs human · review the PR, then /factory approve <id>"; width: 100%; color: var(--human); font-weight: 600; font-size: 12px; }
   #board { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)); gap: 12px; padding: 16px 24px; overflow-x: auto; }
   .col h2 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
@@ -27,6 +27,7 @@
   #human .card { margin: 0; min-width: 220px; }
   .id { font-weight: 600; }
   .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .meta a { color: inherit; }
   .rounds { margin-top: 8px; display: grid; gap: 4px; }
   .row { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); }
   .row b { width: 22px; font-weight: 500; }
@@ -49,7 +50,7 @@
 <div id="board"></div>
 <aside id="drawer"><button onclick="drawer.classList.remove('open')">Close</button><div id="files"></div></aside>
 <script>
-const STAGES = [["spec", "Spec"], ["build", "Build"], ["review", "Review"], ["approval", "Approver"], ["merged", "Merged"]];
+const STAGES = [["spec", "Spec"], ["build", "Build"], ["review", "Review"], ["approval", "Approver"], ["merged", "Shipped"]];
 const REVIEWERS = ["security", "ux", "ui", "code"];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
@@ -62,7 +63,7 @@ function card(job) {
   const rounds = [...(job.history || []), ...(job.reviews ? [job.reviews] : [])];
   return `<div class="card" data-id="${esc(job.id)}">
     <div class="id">${esc(job.id)}</div>
-    <div class="meta">${esc(job.title || "")}${job.round ? ` · round ${job.round}` : ""}</div>
+    <div class="meta">${esc(job.title || "")}${job.round ? ` · round ${job.round}` : ""}${job.pr ? ` · <a href="${esc(job.pr)}" target="_blank">PR</a>` : ""}</div>
     ${rounds.length ? `<div class="rounds">${rounds.map((r, i) => chips(i + 1, r)).join("")}</div>` : ""}
   </div>`;
 }
@@ -71,7 +72,7 @@ let jobs = [];
 async function refresh() {
   try {
     jobs = (await (await fetch("board.json", { cache: "no-store" })).json()).jobs || [];
-  } catch { return; }
+  } catch { jobs = []; }
   human.innerHTML = jobs.filter(j => j.stage === "needs-human").map(card).join("");
   board.innerHTML = jobs.length ? STAGES.map(([key, label]) => `<div class="col"><h2>${label}</h2>
     ${jobs.filter(j => j.stage === key).map(card).join("")}</div>`).join("")
@@ -99,7 +100,7 @@ async function open(id) {
   drawer.classList.add("open");
 }
 
-document.addEventListener("click", e => { const c = e.target.closest(".card"); if (c) open(c.dataset.id); });
+document.addEventListener("click", e => { if (e.target.closest("a")) return; const c = e.target.closest(".card"); if (c) open(c.dataset.id); });
 refresh();
 setInterval(refresh, 2000);
 </script>
