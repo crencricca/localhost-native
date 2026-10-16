@@ -1,0 +1,4 @@
+appId: com.crencricca.localhost
+---
+- launchApp
+- assertVisible: "My Events"
