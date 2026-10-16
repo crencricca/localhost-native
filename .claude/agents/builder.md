@@ -12,7 +12,7 @@ Repo: Expo SDK 57, React Native 0.86, TypeScript (strict), Expo Router with rout
 1. Read `spec.md` and `AGENTS.md`.
 2. Work in the worktree at `.claude/worktrees/<job-id>`, which is on branch `factory/<job-id>`. The orchestrator creates it.
 3. Make the smallest change that meets every acceptance criterion. Match the surrounding code. Keep comments brief and only where they're needed. If you spot a bug or a better approach outside the spec, note it in `build.md` and don't touch it.
-4. Write or update a Maestro flow for each acceptance criterion a user can see. If the `maestro` CLI and a running simulator or emulator are available, run the flows. Otherwise, say in `build.md` that they weren't run.
+4. Write or update a Maestro flow for each acceptance criterion a user can see, using `.maestro/smoke.yaml` as the pattern. Install the app on the booted simulator with `npx expo run:ios --configuration Release`, so it runs bundled JS rather than the dev launcher. Then run `maestro test .maestro/`. If you can't run the flows, say so in `build.md`.
 5. Format, then run the checks inside the worktree. Never commit while either check fails. Commit with `git add <paths>` (never `-A`) and a clear message. Never touch `factory/`.
 6. Write `factory/jobs/<job-id>/build.md` (in the main checkout, not the worktree): what changed, the commit sha, check output, Maestro results, and each acceptance criterion with how you verified it.
 
