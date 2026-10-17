@@ -36,7 +36,19 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 
 ## Ship
 
-**Open the PR.** Run `git push -u origin factory/<id>`. If `pr` is already set, that's all. Otherwise run `gh pr create --base main --head factory/<id> --title "<title>"` with `spec.md` and `decision.md` as the body. Save the URL as `pr` on the board.
+**Open the PR.** Run `git push -u origin factory/<id>`. If `pr` is already set, that's all. Otherwise write `pr.md` in the job folder and run `gh pr create --base main --head factory/<id> --title "<title>" --body-file <job folder>/pr.md`. Save the URL as `pr` on the board.
+
+`pr.md` is for a human scanning the PR list, not a copy of the spec. Write it yourself from `spec.md`, `build.md` and `decision.md`, under 100 words before the attribution line:
+
+```markdown
+<One sentence: what changed and why.>
+
+- <3–5 bullets, only what a reviewer should look at: schema or API changes, behaviour changes, deliberate omissions, anything surprising>
+
+**Needs your call:** <the ESCALATE question in one line. Omit this line on APPROVE.>
+```
+
+Leave out acceptance criteria, file lists, test logs, review verdicts and helper-by-helper details. The diff and the job folder already have them.
 
 **Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`.
 
