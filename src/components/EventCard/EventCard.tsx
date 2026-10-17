@@ -1,20 +1,25 @@
 import { Text, View } from "react-native";
 import type { Event } from "@/constants/event";
 import { Shadows } from "@/constants/theme";
+import type { User } from "@/constants/user";
 import { formatEventDateTime } from "@/lib/event-date";
+import { formatHostLabel } from "@/lib/event-hosts";
 
 type EventCardProps = {
   event: Event;
+  host: User | undefined;
   isPast: boolean;
 };
 
-export default function EventCard({ event, isPast }: EventCardProps) {
+export default function EventCard({ event, host, isPast }: EventCardProps) {
   // Falls back to the date alone when time is null.
   const dateTime = formatEventDateTime(event.date, event.time);
+  // Null when the host is unknown, which hides the host line.
+  const hostLabel = formatHostLabel(host);
   const label = [
     event.title,
     dateTime,
-    event.hostId,
+    hostLabel,
     event.location,
     isPast ? "Past" : null,
   ]
@@ -33,9 +38,11 @@ export default function EventCard({ event, isPast }: EventCardProps) {
         {event.title}
       </Text>
       <Text className="font-sans-600 text-sm text-ink">{dateTime}</Text>
-      <Text className="font-sans-500 text-xs uppercase text-ink">
-        {event.hostId}
-      </Text>
+      {hostLabel && (
+        <Text className="font-sans-500 text-xs uppercase text-ink">
+          {hostLabel}
+        </Text>
+      )}
       <Text className="font-sans text-sm text-ink">{event.location}</Text>
       {isPast && (
         <Text className="self-start rounded-card bg-chip px-2 py-0.5 font-sans-600 text-xs uppercase text-chipInk">

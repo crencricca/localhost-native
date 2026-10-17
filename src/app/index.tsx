@@ -2,7 +2,7 @@ import { FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
 import { compareEventsByExpiry, isEventExpired } from "@/lib/event-date";
-import { mockEvents } from "@/mocks/mock-data";
+import { getUserById, mockEvents } from "@/mocks/mock-data";
 
 export default function Index() {
   const insets = useSafeAreaInsets();
@@ -30,7 +30,11 @@ export default function Index() {
           <Text className="font-display-700 text-3xl text-ink">My Events</Text>
         }
         renderItem={({ item }) => (
-          <EventCard event={item} isPast={isPast(item.date, item.time)} />
+          <EventCard
+            event={item}
+            host={getUserById(item.hostId)}
+            isPast={isPast(item.date, item.time)}
+          />
         )}
       />
     </View>

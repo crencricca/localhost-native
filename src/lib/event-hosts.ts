@@ -1,5 +1,7 @@
 import type { Event } from "@/constants/event";
 import type { GuestStatus } from "@/constants/guest";
+import type { User } from "@/constants/user";
+import { buildShortDisplayName } from "@/lib/user-name";
 
 /** The user's guest status on the event, or `null` if they aren't a guest (the host never is). */
 export function getGuestStatus(
@@ -34,4 +36,9 @@ export function eventIsVisibleToUser(event: Event, userId: string): boolean {
   return (
     status === "invited" || status === "confirmed" || status === "declined"
   );
+}
+
+/** "Hosted by Aidan C.", or `null` when the host is unknown so the caller can hide it. */
+export function formatHostLabel(host: User | undefined): string | null {
+  return host ? `Hosted by ${buildShortDisplayName(host)}` : null;
 }

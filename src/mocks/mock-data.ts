@@ -1,7 +1,21 @@
 import type { Event } from "@/constants/event";
+import type { User } from "@/constants/user";
 import { shiftDateByDays, toDateInputValue } from "@/lib/event-date";
 
 const today = new Date();
+
+export const mockUsers: User[] = [
+  { id: "u1", firstname: "Catie", lastname: "Rencricca" },
+  { id: "u2", firstname: "Felicia", lastname: "Nara" },
+  { id: "u3", firstname: "Aidan", lastname: "Cuite" },
+  { id: "u4", firstname: "Marguerite", lastname: "Wang" },
+  { id: "u6", firstname: "Zach", lastname: "Baugh" },
+  { id: "u7", firstname: "Marissa", lastname: "Catalano" },
+];
+
+export function getUserById(userId: string): User | undefined {
+  return mockUsers.find((user) => user.id === userId);
+}
 
 export const mockEvents: Event[] = [
   {
