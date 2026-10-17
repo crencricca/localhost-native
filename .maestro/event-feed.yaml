@@ -2,8 +2,9 @@ appId: com.crencricca.localhost
 ---
 - launchApp
 - assertVisible: "My Events"
-# Main feed: upcoming soonest first (e4, e2, e5), then past (e3). The user's
-# requested event (e1) sits below in the Requested section.
+# Main feed: upcoming soonest first (e4, e2, e5, e7). Below it, the Requested
+# section (e1), then Past Events (e3). Past events the user did not attend
+# (e6) are not shown anywhere.
 # Each card is one accessible element whose label starts with the title
 # and includes the host label, so match both by regex.
 - scrollUntilVisible:
@@ -17,8 +18,9 @@ appId: com.crencricca.localhost
     element: "Spontaneous ramen if anyone is nearby.*Hosted by Catie R\\..*"
     direction: DOWN
 - scrollUntilVisible:
-    element: "Sunday picnic \\+ cards.*Hosted by Zach B\\..*Past.*Declined.*"
+    element: "Board game marathon.*Hosted by Marissa C\\..*Declined.*"
     direction: DOWN
+- assertNotVisible: "Board game marathon.*Past.*"
 - scrollUntilVisible:
     element: "Requested"
     direction: DOWN
@@ -26,3 +28,12 @@ appId: com.crencricca.localhost
     element: "Two extra tickets for Friday concert.*Hosted by Aidan C\\..*"
     direction: DOWN
 - assertNotVisible: "Two extra tickets for Friday concert.*Declined.*"
+- scrollUntilVisible:
+    element: "Past Events"
+    direction: DOWN
+- scrollUntilVisible:
+    element: "Sunday picnic \\+ cards.*Hosted by Zach B\\..*Past.*"
+    direction: DOWN
+- assertNotVisible: "Sunday picnic \\+ cards.*Declined.*"
+- scroll
+- assertNotVisible: "Rooftop karaoke.*"
