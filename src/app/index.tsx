@@ -1,4 +1,4 @@
-import { FlatList, Text } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
 import { compareEventsByExpiry, isEventExpired } from "@/lib/event-date";
@@ -17,22 +17,22 @@ export default function Index() {
     .sort(compareEventsByExpiry);
 
   return (
-    <FlatList
-      className="flex-1 bg-canvas"
-      contentContainerClassName="gap-4 p-4"
-      // No header on this screen, so pad past the status bar and home indicator.
-      contentContainerStyle={{
-        paddingTop: insets.top + 16,
-        paddingBottom: insets.bottom + 16,
-      }}
-      data={[...upcoming, ...past]}
-      keyExtractor={(event) => event.id}
-      ListHeaderComponent={
-        <Text className="font-display-700 text-3xl text-ink">My Events</Text>
-      }
-      renderItem={({ item }) => (
-        <EventCard event={item} isPast={isPast(item.date, item.time)} />
-      )}
-    />
+    // No header on this screen. The top inset sits outside the list so the
+    // canvas covers the status bar and scrolled content never shows behind it.
+    <View className="flex-1 bg-canvas" style={{ paddingTop: insets.top }}>
+      <FlatList
+        className="flex-1"
+        contentContainerClassName="gap-4 p-4"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+        data={[...upcoming, ...past]}
+        keyExtractor={(event) => event.id}
+        ListHeaderComponent={
+          <Text className="font-display-700 text-3xl text-ink">My Events</Text>
+        }
+        renderItem={({ item }) => (
+          <EventCard event={item} isPast={isPast(item.date, item.time)} />
+        )}
+      />
+    </View>
   );
 }
