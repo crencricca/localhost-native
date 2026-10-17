@@ -17,6 +17,9 @@ export function getUserById(userId: string): User | undefined {
   return mockUsers.find((user) => user.id === userId);
 }
 
+// Catie R., stands in for the signed-in user until auth exists.
+export const mockCurrentUserId = "u1";
+
 export const mockEvents: Event[] = [
   {
     id: "e1",
@@ -69,7 +72,7 @@ export const mockEvents: Event[] = [
     access: "open",
     status: "active",
     guests: [
-      { userId: "u1", status: "requested" },
+      { userId: "u1", status: "declined" },
       { userId: "u2", status: "requested" },
       { userId: "u3", status: "requested" },
       { userId: "u4", status: "confirmed" },
