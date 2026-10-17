@@ -3,20 +3,20 @@ appId: com.crencricca.localhost
 - launchApp
 - assertVisible: "My Events"
 # Feed order: upcoming soonest first (e1, e4, e2, e5), then past (e3).
-# Each card is one accessible element whose label starts with the title,
-# so match the title as a regex prefix.
+# Each card is one accessible element whose label starts with the title
+# and includes the host label, so match both by regex.
 - scrollUntilVisible:
-    element: "Two extra tickets for Friday concert.*"
+    element: "Two extra tickets for Friday concert.*Hosted by Aidan C\\..*"
     direction: DOWN
 - scrollUntilVisible:
-    element: "Dinner reservation already confirmed.*"
+    element: "Dinner reservation already confirmed.*Hosted by Marguerite W\\..*"
     direction: DOWN
 - scrollUntilVisible:
-    element: "Coffee and planning session.*"
+    element: "Coffee and planning session.*Hosted by Catie R\\..*"
     direction: DOWN
 - scrollUntilVisible:
-    element: "Spontaneous ramen if anyone is nearby.*"
+    element: "Spontaneous ramen if anyone is nearby.*Hosted by Catie R\\..*"
     direction: DOWN
 - scrollUntilVisible:
-    element: 'Sunday picnic \+ cards.*'
+    element: 'Sunday picnic \+ cards.*Hosted by Zach B\..*'
     direction: DOWN
