@@ -5,12 +5,12 @@ import { shiftDateByDays, toDateInputValue } from "@/lib/event-date";
 const today = new Date();
 
 export const mockUsers: User[] = [
-  { id: "u1", firstname: "Catie", lastname: "Rencricca" },
-  { id: "u2", firstname: "Felicia", lastname: "Nara" },
-  { id: "u3", firstname: "Aidan", lastname: "Cuite" },
-  { id: "u4", firstname: "Marguerite", lastname: "Wang" },
-  { id: "u6", firstname: "Zach", lastname: "Baugh" },
-  { id: "u7", firstname: "Marissa", lastname: "Catalano" },
+  { id: "u1", firstName: "Catie", lastName: "Rencricca" },
+  { id: "u2", firstName: "Felicia", lastName: "Nara" },
+  { id: "u3", firstName: "Aidan", lastName: "Cuite" },
+  { id: "u4", firstName: "Marguerite", lastName: "Wang" },
+  { id: "u6", firstName: "Zach", lastName: "Baugh" },
+  { id: "u7", firstName: "Marissa", lastName: "Catalano" },
 ];
 
 export function getUserById(userId: string): User | undefined {
