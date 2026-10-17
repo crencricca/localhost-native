@@ -1,14 +1,17 @@
 import { router } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
 import type { Event } from "@/constants/event";
+import { Shadows } from "@/constants/theme";
 import { compareEventsByExpiry, isEventExpired } from "@/lib/event-date";
 import { getGuestStatus, userIsHost } from "@/lib/event-hosts";
-import { getUserById, mockCurrentUserId, mockEvents } from "@/mocks/mock-data";
+import { getUserById, mockCurrentUserId } from "@/mocks/mock-data";
+import { useEvents } from "@/state/events";
 
 export default function Index() {
   const insets = useSafeAreaInsets();
+  const events = useEvents();
   const now = new Date();
   const isPast = (date: string, time: string | null) =>
     isEventExpired(date, time, now);
@@ -17,16 +20,14 @@ export default function Index() {
   const attended = (event: Event) =>
     userIsHost(event, mockCurrentUserId) ||
     getGuestStatus(event, mockCurrentUserId) === "confirmed";
-  // filter returns copies, so mockEvents is never sorted in place.
-  const upcoming = mockEvents.filter(
-    (event) => !isPast(event.date, event.time),
-  );
+  // filter returns copies, so the store's array is never sorted in place.
+  const upcoming = events.filter((event) => !isPast(event.date, event.time));
   const feed = upcoming
     .filter((event) => !isRequested(event))
     .sort(compareEventsByExpiry);
   const requested = upcoming.filter(isRequested).sort(compareEventsByExpiry);
   // Most recent first. Past events the user didn't attend are not shown.
-  const past = mockEvents
+  const past = events
     .filter((event) => isPast(event.date, event.time) && attended(event))
     .sort((left, right) => compareEventsByExpiry(right, left));
 
@@ -54,7 +55,22 @@ export default function Index() {
         data={feed}
         keyExtractor={(event) => event.id}
         ListHeaderComponent={
-          <Text className="font-display-700 text-3xl text-ink">My Events</Text>
+          <View className="flex-row items-center justify-between gap-4">
+            <Text className="font-display-700 text-3xl text-ink">
+              My Events
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="New event"
+              className="min-h-11 min-w-11 items-center justify-center rounded-card border-card border-ink bg-accent px-3"
+              style={{ boxShadow: Shadows.hard }}
+              onPress={() => router.push("/event-form")}
+            >
+              <Text className="font-sans-700 text-sm uppercase text-accentFg">
+                New event
+              </Text>
+            </Pressable>
+          </View>
         }
         renderItem={({ item }) => renderCard(item)}
         ListFooterComponent={

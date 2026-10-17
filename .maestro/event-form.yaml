@@ -1,0 +1,55 @@
+appId: com.crencricca.localhost
+---
+- launchApp
+- assertVisible: "My Events"
+# Create: default date (today) and time (18:00) are kept.
+- tapOn: "New event"
+- assertVisible: "New event"
+- tapOn:
+    id: "event-form-title"
+- inputText: "Maestro test night"
+- tapOn:
+    id: "event-form-location"
+- inputText: "Bushwick, Brooklyn"
+- tapOn: "Save"
+- assertVisible: "My Events"
+- scrollUntilVisible:
+    element: "Maestro test night.*"
+    direction: DOWN
+# Edit: switching e5 to invite-only asks before removing its two requests.
+- scrollUntilVisible:
+    element: "Spontaneous ramen if anyone is nearby.*"
+    direction: DOWN
+- tapOn: "Spontaneous ramen if anyone is nearby.*"
+- tapOn: "Edit"
+- assertVisible: "Edit event"
+- tapOn: "Invite only"
+- tapOn: "Save"
+- assertVisible: "Remove requests"
+# The header also has a "Cancel"; pick the alert's, which sits below its buttons.
+- tapOn:
+    text: "Cancel"
+    below: "Remove requests"
+- assertVisible: "Edit event"
+- assertNotVisible: "Remove requests"
+- tapOn: "Save"
+- tapOn: "Remove requests"
+- assertNotVisible: "Edit event"
+- assertVisible: "Spontaneous ramen if anyone is nearby"
+# Maestro's back command is Android-only; iOS taps the header back button.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
+- assertVisible: "My Events"
+# Cancel: dismisses without saving.
+- tapOn: "New event"
+- assertVisible: "New event"
+- tapOn: "Cancel"
+- assertVisible: "My Events"
