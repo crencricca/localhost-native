@@ -1,11 +1,11 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import type { Event } from "@/constants/event";
 import { Shadows } from "@/constants/theme";
 import type { User } from "@/constants/user";
 import { formatEventDateTime } from "@/lib/event-date";
 import { formatHostLabel } from "@/lib/event-hosts";
 
-const chipClassName =
+export const chipClassName =
   "self-start rounded-card bg-chip px-2 py-0.5 font-sans-600 text-xs uppercase text-chipInk";
 
 type EventCardProps = {
@@ -13,6 +13,7 @@ type EventCardProps = {
   host: User | undefined;
   isPast: boolean;
   isDeclined: boolean;
+  onPress: () => void;
 };
 
 export default function EventCard({
@@ -20,6 +21,7 @@ export default function EventCard({
   host,
   isPast,
   isDeclined,
+  onPress,
 }: EventCardProps) {
   // Falls back to the date alone when time is null.
   const dateTime = formatEventDateTime(event.date, event.time);
@@ -37,9 +39,10 @@ export default function EventCard({
     .join(", ");
 
   return (
-    <View
-      accessible
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={label}
+      onPress={onPress}
       className="gap-1 rounded-card border-card border-ink bg-surfaceRaised p-5"
       // Nativewind maps shadow-* to iOS-only shadow props; boxShadow renders on both platforms.
       style={{ boxShadow: Shadows.hard }}
@@ -60,6 +63,6 @@ export default function EventCard({
           {isDeclined && <Text className={chipClassName}>Declined</Text>}
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }

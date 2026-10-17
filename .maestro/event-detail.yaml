@@ -1,0 +1,44 @@
+appId: com.crencricca.localhost
+---
+- launchApp
+- assertVisible: "My Events"
+# Upcoming event the user hosts: details and the calendar control show.
+- scrollUntilVisible:
+    element: "Coffee and planning session.*Hosted by Catie R\\..*"
+    direction: DOWN
+- tapOn: "Coffee and planning session.*Hosted by Catie R\\..*"
+- assertVisible: "Coffee and planning session"
+- assertVisible: "Hosted by Catie R."
+- assertVisible: ".*Williamsburg.*"
+- assertVisible: "Add to calendar"
+# Maestro's back command is Android-only; iOS taps the header back button.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
+- assertVisible: "My Events"
+# Past event: the Past chip shows and the calendar control is hidden.
+- scrollUntilVisible:
+    element: "Sunday picnic \\+ cards.*"
+    direction: DOWN
+- tapOn: "Sunday picnic \\+ cards.*"
+- assertVisible: "Sunday picnic \\+ cards"
+- assertVisible: ".*Prospect Park.*"
+- assertVisible: "Past"
+- assertNotVisible: "Add to calendar"
+- openLink: localhost://event/does-not-exist
+# iOS asks before opening a custom-scheme link; Android opens it directly.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Open"
+          optional: true
+- assertVisible: "Event not found"
