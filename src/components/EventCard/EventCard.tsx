@@ -5,13 +5,22 @@ import type { User } from "@/constants/user";
 import { formatEventDateTime } from "@/lib/event-date";
 import { formatHostLabel } from "@/lib/event-hosts";
 
+const chipClassName =
+  "self-start rounded-card bg-chip px-2 py-0.5 font-sans-600 text-xs uppercase text-chipInk";
+
 type EventCardProps = {
   event: Event;
   host: User | undefined;
   isPast: boolean;
+  isDeclined: boolean;
 };
 
-export default function EventCard({ event, host, isPast }: EventCardProps) {
+export default function EventCard({
+  event,
+  host,
+  isPast,
+  isDeclined,
+}: EventCardProps) {
   // Falls back to the date alone when time is null.
   const dateTime = formatEventDateTime(event.date, event.time);
   // Null when the host is unknown, which hides the host line.
@@ -22,6 +31,7 @@ export default function EventCard({ event, host, isPast }: EventCardProps) {
     hostLabel,
     event.location,
     isPast ? "Past" : null,
+    isDeclined ? "Declined" : null,
   ]
     .filter(Boolean)
     .join(", ");
@@ -44,10 +54,11 @@ export default function EventCard({ event, host, isPast }: EventCardProps) {
         </Text>
       )}
       <Text className="font-sans text-sm text-ink">{event.location}</Text>
-      {isPast && (
-        <Text className="self-start rounded-card bg-chip px-2 py-0.5 font-sans-600 text-xs uppercase text-chipInk">
-          Past
-        </Text>
+      {(isPast || isDeclined) && (
+        <View className="flex-row flex-wrap gap-2">
+          {isPast && <Text className={chipClassName}>Past</Text>}
+          {isDeclined && <Text className={chipClassName}>Declined</Text>}
+        </View>
       )}
     </View>
   );
