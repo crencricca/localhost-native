@@ -16,11 +16,13 @@ export default function Index() {
 
   return (
     <FlatList
-      className="flex-1"
+      className="flex-1 bg-canvas"
       contentContainerClassName="gap-4 p-4"
       data={[...upcoming, ...past]}
       keyExtractor={(event) => event.id}
-      ListHeaderComponent={<Text className="text-xl">My Events</Text>}
+      ListHeaderComponent={
+        <Text className="font-display-700 text-3xl text-ink">My Events</Text>
+      }
       renderItem={({ item }) => (
         <EventCard event={item} isPast={isPast(item.date, item.time)} />
       )}

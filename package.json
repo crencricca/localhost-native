@@ -3,6 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/caveat": "^0.4.2",
+    "@expo-google-fonts/chakra-petch": "^0.4.1",
+    "@expo-google-fonts/space-grotesk": "^0.4.1",
     "@expo/ui": "~57.0.25",
     "expo": "~57.0.30",
     "expo-constants": "~57.0.22",
