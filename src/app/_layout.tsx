@@ -55,7 +55,10 @@ export default function RootLayout() {
           headerShadowVisible: false,
           contentStyle: { backgroundColor: Colors.canvas },
         }}
-      />
+      >
+        {/* The home screen has its own "My Events" heading. */}
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+      </Stack>
     </>
   );
 }

@@ -33,12 +33,12 @@ export default function EventCard({ event, isPast }: EventCardProps) {
         {event.title}
       </Text>
       <Text className="font-sans-600 text-sm text-ink">{dateTime}</Text>
-      <Text className="font-sans-500 text-xs uppercase text-muted">
+      <Text className="font-sans-500 text-xs uppercase text-ink">
         {event.hostId}
       </Text>
       <Text className="font-sans text-sm text-ink">{event.location}</Text>
       {isPast && (
-        <Text className="self-start font-sans-600 text-xs uppercase text-muted opacity-70">
+        <Text className="self-start rounded-card bg-chip px-2 py-0.5 font-sans-600 text-xs uppercase text-chipInk">
           Past
         </Text>
       )}

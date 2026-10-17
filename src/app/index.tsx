@@ -1,9 +1,11 @@
 import { FlatList, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
 import { compareEventsByExpiry, isEventExpired } from "@/lib/event-date";
 import { mockEvents } from "@/mocks/mock-data";
 
 export default function Index() {
+  const insets = useSafeAreaInsets();
   const now = new Date();
   const isPast = (date: string, time: string | null) =>
     isEventExpired(date, time, now);
@@ -18,6 +20,11 @@ export default function Index() {
     <FlatList
       className="flex-1 bg-canvas"
       contentContainerClassName="gap-4 p-4"
+      // No header on this screen, so pad past the status bar and home indicator.
+      contentContainerStyle={{
+        paddingTop: insets.top + 16,
+        paddingBottom: insets.bottom + 16,
+      }}
       data={[...upcoming, ...past]}
       keyExtractor={(event) => event.id}
       ListHeaderComponent={
