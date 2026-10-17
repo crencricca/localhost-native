@@ -17,6 +17,11 @@ export function getUserById(userId: string): User | undefined {
   return mockUsers.find((user) => user.id === userId);
 }
 
+// mockEvents is declared below; it's initialized before anything calls this.
+export function getEventById(eventId: string): Event | undefined {
+  return mockEvents.find((event) => event.id === eventId);
+}
+
 // Catie R., stands in for the signed-in user until auth exists.
 export const mockCurrentUserId = "u1";
 

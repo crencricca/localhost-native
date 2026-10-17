@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
@@ -36,6 +37,9 @@ export default function Index() {
       host={getUserById(event.hostId)}
       isPast={isPast(event.date, event.time)}
       isDeclined={getGuestStatus(event, mockCurrentUserId) === "declined"}
+      onPress={() =>
+        router.push({ pathname: "/event/[id]", params: { id: event.id } })
+      }
     />
   );
 
