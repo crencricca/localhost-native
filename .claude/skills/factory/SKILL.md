@@ -4,7 +4,7 @@ description: Run the software factory. Takes a feature through spec, build, four
 argument-hint: <feature> | next | build <job-id> | approve <job-id> | rework <job-id> <note>
 disable-model-invocation: true
 ---
-You are the orchestrator. You run the loop, spawn every agent, and you are the only writer of `factory/board.json`. Agents get context from files, not from this conversation. Each one writes only its own file, so pass them paths, not summaries.
+You are the orchestrator. You run the loop, spawn every agent, and you are the only writer of `factory/board.json`. Agents get context from files, not from this conversation. Each one writes only its own file, so pass them paths, not summaries. `factory/context.md` is the factory's shared memory: the spec-writer, builder and approver read it on every job, and only you edit it.
 
 Run from the repo root, with the main checkout on `main`. Shipping needs the `gh` CLI, signed in. Watch the board with `cd factory && python3 -m http.server`, then open `/dashboard.html`.
 
@@ -24,7 +24,7 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 ## The loop
 
 1. **Job.** The id is the next three-digit number after the highest one in `factory/jobs/`, plus a short kebab slug, like `004-event-feed`. Create `factory/jobs/<id>/` and add the job at stage `spec`. The title is a short imperative summary like `Add event feed`, and it becomes the PR and commit title.
-2. **Spec.** Spawn `spec-writer` with the feature text and the job folder. Wait for `spec.md`, then set the stage to `spec-review` and stop. Refine the spec with the user in this session, editing `spec.md` as you agree. Build only on `/factory build <id>`.
+2. **Spec.** Spawn `spec-writer` with the feature text and the job folder. Wait for `spec.md`, then set the stage to `spec-review` and stop. Refine the spec with the user in this session, editing `spec.md` as you agree, and record their decisions and reasons in `notes.md`. Before building, update `factory/context.md` with any decision that outlives the job, such as a new or changed domain rule or a resolved open question. Rewrite or delete the old line rather than adding to it, and tag it with the job id. Build only on `/factory build <id>`.
 3. **Build.** Run `git pull --ff-only origin main`, then `git worktree add .claude/worktrees/<id> -b factory/<id> main`, then set the stage to `build`. Spawn `builder` named `builder-<id>` with the job id and folder. Wait for `build.md`.
 4. **Review.** Set `round` to n, create `round-<n>/`, set all four reviews to `pending` and the stage to `review`. Spawn `review-security`, `review-ux`, `review-ui` and `review-code` in parallel, each with the job id and the round folder. As each finishes, read the first line of its file and update the board.
 5. **Wait for all.** The round is done only when all four `review-*.md` files exist in `round-<n>/`. Never resume the builder mid-round.
@@ -50,7 +50,7 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 
 Leave out acceptance criteria, file lists, test logs, review verdicts and helper-by-helper details. The diff and the job folder already have them.
 
-**Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`.
+**Merge.** Run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged`. Then add anything new from `build.md`, the reviews or `decision.md` to the Open questions and Known gaps sections of `factory/context.md`, and remove what this job closed.
 
 **Conflicts.** If `gh pr merge` fails on a conflict, run `/factory rework <id> Merge origin/main and resolve the conflicts`. After every successful merge, check each other job with an open PR using `gh pr view <pr> --json mergeable`, and rework every one that says `CONFLICTING` the same way.
 

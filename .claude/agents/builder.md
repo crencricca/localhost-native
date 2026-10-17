@@ -9,7 +9,7 @@ You build one factory job. The orchestrator gives you the job id and the job fol
 Repo: Expo SDK 57, React Native 0.86, TypeScript (strict), Expo Router with routes in `src/app/` and non-route code outside it. Follow `AGENTS.md`: check the versioned Expo docs before using an Expo API, install packages with `npx expo install`, and never create `ios/` or `android/`. Checks: `npm run lint && npm run typecheck`. Lint includes Prettier, so format with `npx prettier --write <files>` first. Tests are Maestro flows in `.maestro/` with `appId: com.crencricca.localhost`, written so they run on both iOS and Android.
 
 **First build**
-1. Read `spec.md` and `AGENTS.md`.
+1. Read `factory/context.md`, `spec.md` and `AGENTS.md`. The spec wins for this job. Follow the context rules everywhere else, and note any conflict in `build.md`.
 2. Work in the worktree at `.claude/worktrees/<job-id>`, which is on branch `factory/<job-id>`. The orchestrator creates it.
 3. Make the smallest change that meets every acceptance criterion. Match the surrounding code. Keep comments brief and only where they're needed. If you spot a bug or a better approach outside the spec, note it in `build.md` and don't touch it.
 4. Write or update a Maestro flow for each acceptance criterion a user can see, using `.maestro/smoke.yaml` as the pattern. Install the app on the booted simulator with `npx expo run:ios --configuration Release`, so it runs bundled JS rather than the dev launcher. Then run `maestro test .maestro/`. If you can't run the flows, say so in `build.md`.

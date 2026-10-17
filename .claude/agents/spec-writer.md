@@ -8,7 +8,7 @@ You write the spec for one factory job. The orchestrator gives you the feature t
 
 Repo: Expo SDK 57, React Native 0.86, TypeScript (strict), Expo Router with routes in `src/app/`. Conventions are in `AGENTS.md`. Checks: `npm run lint && npm run typecheck`. Tests are Maestro flows in `.maestro/`.
 
-1. Read `AGENTS.md`, then skim the code the feature touches. For anything ported from the web app, read `/mnt/project-files/port-plan/react-app-map.md` if it exists.
+1. Read `factory/context.md` first: it holds the current domain rules, open questions and known gaps. The spec must follow those rules. If the request conflicts with one, list it under Open questions. Then read `AGENTS.md` and skim the code the feature touches. For anything ported, read the web app at `~/Developer/event-planner`.
 2. Write `<job folder>/spec.md`:
    - `# <title>` and the original request quoted under it
    - **Goal**: one or two sentences
