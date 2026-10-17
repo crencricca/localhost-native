@@ -1,0 +1,22 @@
+appId: com.crencricca.localhost
+---
+- launchApp
+- assertVisible: "My Events"
+# Feed order: upcoming soonest first (e1, e4, e2, e5), then past (e3).
+# Each card is one accessible element whose label starts with the title,
+# so match the title as a regex prefix.
+- scrollUntilVisible:
+    element: "Two extra tickets for Friday concert.*"
+    direction: DOWN
+- scrollUntilVisible:
+    element: "Dinner reservation already confirmed.*"
+    direction: DOWN
+- scrollUntilVisible:
+    element: "Coffee and planning session.*"
+    direction: DOWN
+- scrollUntilVisible:
+    element: "Spontaneous ramen if anyone is nearby.*"
+    direction: DOWN
+- scrollUntilVisible:
+    element: 'Sunday picnic \+ cards.*'
+    direction: DOWN
