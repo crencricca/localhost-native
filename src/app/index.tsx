@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EventCard from "@/components/EventCard/EventCard";
 import type { Event } from "@/constants/event";
 import { compareEventsByExpiry, isEventExpired } from "@/lib/event-date";
-import { getGuestStatus } from "@/lib/event-hosts";
+import { getGuestStatus, userIsHost } from "@/lib/event-hosts";
 import { getUserById, mockCurrentUserId, mockEvents } from "@/mocks/mock-data";
 
 export default function Index() {
@@ -11,19 +11,23 @@ export default function Index() {
   const now = new Date();
   const isPast = (date: string, time: string | null) =>
     isEventExpired(date, time, now);
-  // Upcoming soonest first, then past. filter returns copies, so mockEvents is never sorted in place.
-  const order = (events: Event[]) => [
-    ...events
-      .filter((event) => !isPast(event.date, event.time))
-      .sort(compareEventsByExpiry),
-    ...events
-      .filter((event) => isPast(event.date, event.time))
-      .sort(compareEventsByExpiry),
-  ];
   const isRequested = (event: Event) =>
     getGuestStatus(event, mockCurrentUserId) === "requested";
-  const feed = order(mockEvents.filter((event) => !isRequested(event)));
-  const requested = order(mockEvents.filter(isRequested));
+  const attended = (event: Event) =>
+    userIsHost(event, mockCurrentUserId) ||
+    getGuestStatus(event, mockCurrentUserId) === "confirmed";
+  // filter returns copies, so mockEvents is never sorted in place.
+  const upcoming = mockEvents.filter(
+    (event) => !isPast(event.date, event.time),
+  );
+  const feed = upcoming
+    .filter((event) => !isRequested(event))
+    .sort(compareEventsByExpiry);
+  const requested = upcoming.filter(isRequested).sort(compareEventsByExpiry);
+  // Most recent first. Past events the user didn't attend are not shown.
+  const past = mockEvents
+    .filter((event) => isPast(event.date, event.time) && attended(event))
+    .sort((left, right) => compareEventsByExpiry(right, left));
 
   const renderCard = (event: Event) => (
     <EventCard
@@ -50,15 +54,30 @@ export default function Index() {
         }
         renderItem={({ item }) => renderCard(item)}
         ListFooterComponent={
-          requested.length > 0 ? (
+          requested.length > 0 || past.length > 0 ? (
             <View className="gap-4">
-              <Text
-                accessibilityRole="header"
-                className="font-display-700 text-2xl text-ink"
-              >
-                Requested
-              </Text>
-              {requested.map(renderCard)}
+              {requested.length > 0 ? (
+                <>
+                  <Text
+                    accessibilityRole="header"
+                    className="font-display-700 text-2xl text-ink"
+                  >
+                    Requested
+                  </Text>
+                  {requested.map(renderCard)}
+                </>
+              ) : null}
+              {past.length > 0 ? (
+                <>
+                  <Text
+                    accessibilityRole="header"
+                    className="font-display-700 text-2xl text-ink"
+                  >
+                    Past Events
+                  </Text>
+                  {past.map(renderCard)}
+                </>
+              ) : null}
             </View>
           ) : null
         }

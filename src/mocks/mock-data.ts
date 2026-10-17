@@ -72,7 +72,7 @@ export const mockEvents: Event[] = [
     access: "open",
     status: "active",
     guests: [
-      { userId: "u1", status: "declined" },
+      { userId: "u1", status: "confirmed" },
       { userId: "u2", status: "requested" },
       { userId: "u3", status: "requested" },
       { userId: "u4", status: "confirmed" },
@@ -114,6 +114,43 @@ export const mockEvents: Event[] = [
       { userId: "u6", status: "requested" },
     ],
     capacity: null,
+    tickets: null,
+  },
+  {
+    id: "e6",
+    hostId: "u2",
+    title: "Rooftop karaoke",
+    description:
+      "Booked a private room with a view. Ask for a spot and I'll confirm once I know numbers.",
+    // Past and still requested, so the feed hides it.
+    date: toDateInputValue(shiftDateByDays(today, -2)),
+    time: "21:00",
+    location: "Lower East Side",
+    access: "request",
+    status: "active",
+    guests: [
+      { userId: "u1", status: "requested" },
+      { userId: "u3", status: "confirmed" },
+    ],
+    capacity: 4,
+    tickets: null,
+  },
+  {
+    id: "e7",
+    hostId: "u7",
+    title: "Board game marathon",
+    description:
+      "Bringing the long games out. Drop in for one round or stay all evening.",
+    date: toDateInputValue(shiftDateByDays(today, 7)),
+    time: "17:00",
+    location: "Park Slope",
+    access: "open",
+    status: "active",
+    guests: [
+      { userId: "u1", status: "declined" },
+      { userId: "u4", status: "confirmed" },
+    ],
+    capacity: 5,
     tickets: null,
   },
 ];
