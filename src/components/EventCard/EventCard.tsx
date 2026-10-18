@@ -11,7 +11,6 @@ export const chipClassName =
 type EventCardProps = {
   event: Event;
   host: User | undefined;
-  isPast: boolean;
   isDeclined: boolean;
   onPress: () => void;
 };
@@ -19,7 +18,6 @@ type EventCardProps = {
 export default function EventCard({
   event,
   host,
-  isPast,
   isDeclined,
   onPress,
 }: EventCardProps) {
@@ -32,7 +30,6 @@ export default function EventCard({
     dateTime,
     hostLabel,
     event.location,
-    isPast ? "Past" : null,
     isDeclined ? "Declined" : null,
   ]
     .filter(Boolean)
@@ -57,10 +54,9 @@ export default function EventCard({
         </Text>
       )}
       <Text className="font-sans text-sm text-ink">{event.location}</Text>
-      {(isPast || isDeclined) && (
+      {isDeclined && (
         <View className="flex-row flex-wrap gap-2">
-          {isPast && <Text className={chipClassName}>Past</Text>}
-          {isDeclined && <Text className={chipClassName}>Declined</Text>}
+          <Text className={chipClassName}>Declined</Text>
         </View>
       )}
     </Pressable>
