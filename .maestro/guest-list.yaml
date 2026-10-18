@@ -1,0 +1,79 @@
+appId: com.crencricca.localhost
+---
+- launchApp
+- assertVisible: "My Events"
+# Host view (e2): names in Going, no host row, and the Interested list.
+- scrollUntilVisible:
+    element: "Coffee and planning session.*Hosted by Catie R\\..*"
+    direction: DOWN
+- tapOn: "Coffee and planning session.*Hosted by Catie R\\..*"
+- assertVisible: "Coffee and planning session"
+- scrollUntilVisible:
+    element: "Going \\(1/3\\)"
+    direction: DOWN
+- assertVisible: "2 spots left"
+- assertVisible: "Zach B\\."
+- assertNotVisible: ".*host tickets?.*"
+- scrollUntilVisible:
+    element: "Interested"
+    direction: DOWN
+- assertVisible: "Marissa C\\."
+- takeScreenshot: guest-list-host
+# Maestro's back command is Android-only; iOS taps the header back button.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
+- assertVisible: "My Events"
+# Requested viewer (e1): counts and tickets, but no names and no Interested.
+- scrollUntilVisible:
+    element: "Two extra tickets for Friday concert.*Hosted by Aidan C\\..*"
+    direction: DOWN
+- tapOn: "Two extra tickets for Friday concert.*Hosted by Aidan C\\..*"
+- assertVisible: "Two extra tickets for Friday concert"
+- scrollUntilVisible:
+    element: "Only guests who are going can see who's coming\\."
+    direction: DOWN
+- assertVisible: "Going \\(1/4\\)"
+- assertVisible: "3 spots left"
+- assertVisible: "1 of 2 host tickets left"
+- assertNotVisible: "Marguerite W\\."
+- assertNotVisible: "Interested"
+- assertNotVisible: "Felicia N\\."
+- assertNotVisible: "Marissa C\\."
+- takeScreenshot: guest-list-requested
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
+# Home keeps its scroll position, so "My Events" may be off screen here.
+- assertVisible: "Two extra tickets for Friday concert.*"
+# Past event, confirmed viewer (e3): Going stays as a record, the You row
+# sorts first, and spots left is hidden.
+- scrollUntilVisible:
+    element: "Sunday picnic \\+ cards.*Hosted by Zach B\\..*"
+    direction: DOWN
+- tapOn: "Sunday picnic \\+ cards.*Hosted by Zach B\\..*"
+- assertVisible: "Sunday picnic \\+ cards"
+- scrollUntilVisible:
+    element: "Going \\(2/3\\)"
+    direction: DOWN
+- assertVisible: "Catie R\\. \\(You\\)"
+- assertVisible: "Marguerite W\\."
+- assertNotVisible: ".*spots? left.*"
+- assertNotVisible: "Interested"
+- assertNotVisible: "Felicia N\\."
+- assertNotVisible: "Aidan C\\."
+- takeScreenshot: guest-list-past
