@@ -28,6 +28,6 @@ Most features here were built by `/factory`, a [Claude Code](https://claude.com/
 1. **Spec**: a spec-writer drafts `spec.md`, then pauses for human review.
 2. **Build**: a builder implements it in its own git worktree and branch.
 3. **Review**: security, UX, UI and code reviewers run in parallel. On changes, the builder reworks (up to 2 rounds).
-4. **Approve**: an approver opens a PR and either squash-merges it once CI passes or escalates to a human.
+4. **Approve**: the job opens a PR, and an approver either squash-merges it once CI passes or escalates to a human.
 
 Usage: `/factory <feature>`, or `/factory next` to take the next item in [`factory/backlog.md`](factory/backlog.md). [`factory/context.md`](factory/context.md) holds the domain rules and decisions every agent reads. Agents live in [`.claude/agents/`](.claude/agents/), the orchestrator in [`.claude/skills/factory/SKILL.md`](.claude/skills/factory/SKILL.md). Watch progress with `cd factory && python3 -m http.server --bind 127.0.0.1`, then open `/dashboard.html`.
