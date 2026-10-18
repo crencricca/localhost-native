@@ -1,56 +1,33 @@
-# Welcome to your Expo app 👋
+# LocalHost
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An event planner for iOS and Android: create events, track the ones you're hosting or attending, and view event details. React Native port of the [LocalHost web app](https://github.com/crencricca/localhost).
 
-## Get started
+<p>
+  <img src="docs/screenshots/my-events.png" width="250" alt="My events" />
+  <img src="docs/screenshots/event-detail.png" width="250" alt="Event detail" />
+  <img src="docs/screenshots/new-event.png" width="250" alt="New event" />
+</p>
 
-1. Install dependencies
+## Run locally
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Requires Node, plus Xcode (iOS) or Android Studio (Android).
 
 ```bash
-npm run reset-project
+npm install
+npm run ios      # or: npm run android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This builds a development build and starts the dev server. After the first build, `npm start` is enough.
 
-### Other setup steps
+Lint and typecheck: `npm run lint && npm run typecheck`
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Software factory
 
-## Learn more
+Most features here were built by `/factory`, a [Claude Code](https://claude.com/claude-code) skill that runs a feature through a multi-agent pipeline:
 
-To learn more about developing your project with Expo, look at the following resources:
+1. **Spec**: a spec-writer drafts `spec.md`, then pauses for human review.
+2. **Build**: a builder implements it in its own git worktree and branch.
+3. **Review**: security, UX, UI and code reviewers run in parallel. On changes, the builder reworks (up to 2 rounds).
+4. **Approve**: the job opens a PR, and an approver either squash-merges it once CI passes or escalates to a human.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Usage: `/factory <feature>`, or `/factory next` to take the next item in [`factory/backlog.md`](factory/backlog.md). [`factory/context.md`](factory/context.md) holds the domain rules and decisions every agent reads. Agents live in [`.claude/agents/`](.claude/agents/), the orchestrator in [`.claude/skills/factory/SKILL.md`](.claude/skills/factory/SKILL.md). Watch progress with `cd factory && python3 -m http.server --bind 127.0.0.1`, then open `/dashboard.html`.
