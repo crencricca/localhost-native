@@ -76,13 +76,17 @@ function card(job) {
 }
 
 let jobs = [];
+// Shipped is newest first; jobs without merged_at keep reverse board order.
+const inStage = key => key === "merged"
+  ? jobs.filter(j => j.stage === key).reverse().sort((a, b) => (b.merged_at || "").localeCompare(a.merged_at || ""))
+  : jobs.filter(j => j.stage === key);
 async function refresh() {
   try {
     jobs = (await (await fetch("board.json", { cache: "no-store" })).json()).jobs || [];
   } catch { jobs = []; }
   human.innerHTML = jobs.filter(j => ["spec-review", "needs-human"].includes(j.stage)).map(card).join("");
   board.innerHTML = jobs.length ? STAGES.map(([key, label]) => `<div class="col"><h2>${label}</h2>
-    ${jobs.filter(j => j.stage === key).map(card).join("")}</div>`).join("")
+    ${inStage(key).map(card).join("")}</div>`).join("")
     : `<div class="empty">No jobs yet. Run <code>/factory &lt;feature&gt;</code> or <code>/factory next</code>.</div>`;
   updated.textContent = "updated " + new Date().toLocaleTimeString();
 }
