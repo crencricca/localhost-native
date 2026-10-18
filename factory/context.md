@@ -21,12 +21,20 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 - `open` and `request` events are visible to everyone. `invite_only` events are visible to the host and to `invited`, `confirmed` and `declined` guests (002).
 - Upcoming events the user `declined` stay in the main feed with a "Declined" chip, so they can change their mind (002, 005).
 - Upcoming events the user `requested` (any `access`) go in a separate Requested section below the main feed, not the main feed (005).
+- Home-screen cards show no "Past" chip: past events only appear under the Past Events heading, which already says it. The event detail screen keeps its chip, since a deep link can open it with no heading for context (009).
 - Past Events is a history of events the user attended: hosted or `confirmed`, most recent first. Every other past event (`requested`, `invited`, `declined`) is hidden, because the "change your mind" reason no longer applies once an event is over (006).
 
 **Event detail** (`/event/[id]`)
 - Every home-screen card opens it. The route itself checks `eventIsVisibleToUser` and shows nothing about an event the user can't see, since a deep link can reach any id (007).
 - Maps opens the platform's own app: Apple Maps on iOS, the default `geo:` app on Android. Google Maps on iOS would open a browser tab when its app isn't installed (007).
 - "Add to calendar" opens a Google Calendar template URL and is hidden for past events. Writing to the device calendar would need `expo-calendar` and a permission prompt, so it's deferred (007).
+
+**Creating and editing events**
+- Only the host edits an event, and only while it's upcoming. New and edited events can't be dated before today (008).
+- Switching an event to `invite_only` removes its `requested` guest entries, after the host confirms. Declining them would break two rules: a status is the guest's own reply, and declined guests can see `invite_only` events (008).
+- A host can't lower `capacity` below the confirmed guest count; the form blocks the save rather than raising it silently like the web app (008).
+- The form always saves a time (default 18:00). Events with a `null` time still exist and must keep rendering (008).
+- Events live in an in-memory store seeded from `mockEvents`, with no persistence. Routes read events from the store, not from `mockEvents` directly. This is the seam for Firebase later (008).
 
 **Dates**
 - Past is derived from the date with `isEventExpired`. Never set `Event.status` to `"past"` (002).
@@ -41,14 +49,17 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 ## Open questions
 
 - Which confirmed guests get the host's tickets. This needs a confirmation order, such as a `confirmedAt` field, which the model doesn't have yet (002).
-- What happens to pending `requested` guests when a host switches an event to `invite_only`: decline them, or block the change. Decide in the create/edit job.
 - Which guests a viewer may see on the event detail screen, and whether "Going (n/capacity)" counts the host. Decide in the guest-list job (007).
-- Whether to drop the "Past" chip inside Past Events, where the heading already says it (backlog).
 
 ## Known gaps
 
 - Android has never been tested: shadows, safe-area insets, the Maestro flows, and the light-blue adaptive icon background (`#E6F4FE`) against the dark splash.
 - No check at the largest accessibility text size.
+- A new `invite_only` event has no guests and is visible only to its host until there's a way to invite people (008).
+- Android date picker (`@expo/ui/jetpack-compose` `DateTimePicker`) may report the picked day as UTC midnight, which would save the previous day west of UTC. Check it in the first Android pass (008).
+- The event store's `updateEvent` has no host check; only the guarded `event-form` route writes to it. With a backend, the server must enforce host-only edits and the remove-only-`requested` rule (008).
+- Form text fields have no `maxLength`, and `createEventId` uses `Math.random`. Fine in memory; revisit with a backend (008).
+- The form's Save button is disabled without saying why, and the home header row ("My Events" + "New event") may crowd at large text sizes (008).
 - The home feed doesn't apply `eventIsVisibleToUser` yet; only the detail route does. An `invite_only` event the user isn't on would show in the feed (005, 007).
 - The detail route shows different messages for "Event not found" and "no access", so a user can tell that an event id exists. Merge them once real data arrives (007).
 - "Add to calendar" sends an event's title, time, description and location to Google, and Maps sends the location to Apple. Check that this is acceptable for `invite_only` events once data is real (007).
