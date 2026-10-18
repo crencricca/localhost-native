@@ -18,6 +18,7 @@ appId: com.crencricca.localhost
     element: "Interested"
     direction: DOWN
 - assertVisible: "Marissa C\\."
+- takeScreenshot: guest-list-host
 # Maestro's back command is Android-only; iOS taps the header back button.
 - runFlow:
     when:
@@ -46,6 +47,7 @@ appId: com.crencricca.localhost
 - assertNotVisible: "Interested"
 - assertNotVisible: "Felicia N\\."
 - assertNotVisible: "Marissa C\\."
+- takeScreenshot: guest-list-requested
 - runFlow:
     when:
       platform: Android
@@ -74,3 +76,4 @@ appId: com.crencricca.localhost
 - assertNotVisible: "Interested"
 - assertNotVisible: "Felicia N\\."
 - assertNotVisible: "Aidan C\\."
+- takeScreenshot: guest-list-past
