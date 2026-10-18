@@ -36,7 +36,6 @@ export default function Index() {
       key={event.id}
       event={event}
       host={getUserById(event.hostId)}
-      isPast={isPast(event.date, event.time)}
       isDeclined={getGuestStatus(event, mockCurrentUserId) === "declined"}
       onPress={() =>
         router.push({ pathname: "/event/[id]", params: { id: event.id } })
