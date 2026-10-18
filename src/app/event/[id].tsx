@@ -1,5 +1,5 @@
 import * as Linking from "expo-linking";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   Alert,
   Platform,
@@ -17,15 +17,13 @@ import {
   eventIsVisibleToUser,
   formatHostLabel,
   getGuestStatus,
+  userIsHost,
 } from "@/lib/event-hosts";
 import { buildGoogleCalendarRenderUrl } from "@/lib/google-calendar-url";
 import { tokenizeLinks } from "@/lib/linkify";
 import { buildNativeMapsUrl } from "@/lib/native-maps-url";
-import {
-  getEventById,
-  getUserById,
-  mockCurrentUserId,
-} from "@/mocks/mock-data";
+import { getUserById, mockCurrentUserId } from "@/mocks/mock-data";
+import { useEvent } from "@/state/events";
 
 function openUrl(url: string, failureMessage: string) {
   Linking.openURL(url).catch(() => Alert.alert(failureMessage));
@@ -34,7 +32,7 @@ function openUrl(url: string, failureMessage: string) {
 export default function EventDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const event = getEventById(id);
+  const event = useEvent(id);
 
   return (
     <>
@@ -81,6 +79,7 @@ function Message({ text }: { text: string }) {
 function EventDetails({ event }: { event: Event }) {
   const isPast = isEventExpired(event.date, event.time, new Date());
   const isDeclined = getGuestStatus(event, mockCurrentUserId) === "declined";
+  const canEdit = !isPast && userIsHost(event, mockCurrentUserId);
   const dateTime = formatEventDateTime(event.date, event.time);
   const hostLabel = formatHostLabel(getUserById(event.hostId));
   const mapsUrl = buildNativeMapsUrl(event.location, Platform.OS);
@@ -161,6 +160,21 @@ function EventDetails({ event }: { event: Event }) {
         >
           <Text className="font-sans-700 text-base uppercase text-accentFg">
             Add to calendar
+          </Text>
+        </Pressable>
+      )}
+      {canEdit && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Edit"
+          className="mt-2 min-h-11 items-center justify-center rounded-card border-card border-ink bg-surface px-4 py-2"
+          style={{ boxShadow: Shadows.hard }}
+          onPress={() =>
+            router.push({ pathname: "/event-form", params: { id: event.id } })
+          }
+        >
+          <Text className="font-sans-700 text-base uppercase text-ink">
+            Edit
           </Text>
         </Pressable>
       )}

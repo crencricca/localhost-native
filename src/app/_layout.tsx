@@ -17,6 +17,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { Colors, Fonts } from "@/constants/theme";
+import { EventsProvider } from "@/state/events";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,7 +46,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <EventsProvider>
       <StatusBar style="light" />
       <Stack
         screenOptions={{
@@ -58,7 +59,8 @@ export default function RootLayout() {
       >
         {/* The home screen has its own "My Events" heading. */}
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="event-form" options={{ presentation: "modal" }} />
       </Stack>
-    </>
+    </EventsProvider>
   );
 }
