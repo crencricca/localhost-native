@@ -28,6 +28,7 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 - Every home-screen card opens it. The route itself checks `eventIsVisibleToUser` and shows nothing about an event the user can't see, since a deep link can reach any id (007).
 - Maps opens the platform's own app: Apple Maps on iOS, the default `geo:` app on Android. Google Maps on iOS would open a browser tab when its app isn't installed (007).
 - "Add to calendar" opens a Google Calendar template URL and is hidden for past events. Writing to the device calendar would need `expo-calendar` and a permission prompt, so it's deferred (007).
+- Guest section: "Going (n/capacity)" never counts the host, and the host is not a row in it ("Hosted by" names them). Only attendees (host or `confirmed`) see who is going; everyone else who can see the event sees the count, spots left and host tickets but no names, so real names on public events don't reach strangers. "Interested" means `requested` guests and only the host sees it. `invited` and `declined` guests are shown to no one yet. Past events keep Going as a record and hide spots left and tickets. These rules live in `src/lib/event-guests.ts` (010).
 
 **Creating and editing events**
 - Only the host edits an event, and only while it's upcoming. New and edited events can't be dated before today (008).
@@ -48,8 +49,7 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 
 ## Open questions
 
-- Which confirmed guests get the host's tickets. This needs a confirmation order, such as a `confirmedAt` field, which the model doesn't have yet (002).
-- Which guests a viewer may see on the event detail screen, and whether "Going (n/capacity)" counts the host. Decide in the guest-list job (007).
+- Which confirmed guests get the host's tickets. This needs a confirmation order, such as a `confirmedAt` field, which the model doesn't have yet. Until then the detail screen shows only a ticket count and labels no guest (002, 010).
 
 ## Known gaps
 
