@@ -63,7 +63,8 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 - The home feed doesn't apply `eventIsVisibleToUser` yet; only the detail route does. An `invite_only` event the user isn't on would show in the feed (005, 007).
 - The detail route shows different messages for "Event not found" and "no access", so a user can tell that an event id exists. Merge them once real data arrives (007).
 - "Add to calendar" sends an event's title, time, description and location to Google, and Maps sends the location to Apple. Check that this is acceptable for `invite_only` events once data is real (007).
-- Visibility and feed filtering only happens on the client, and the full `guests` array reaches the client. Once there's a backend, the server must filter, and host lookups should return only the id and names.
+- Visibility and feed filtering only happens on the client, and the full `guests` array reaches the client. The guest section hides names on screen only, so it gives no real privacy until the server filters. Once there's a backend, the server must apply the visibility and guest-section rules, and host lookups should return only the id and names (010).
+- No mock event shows "Full", "1 spot left", unlimited capacity in the guest section, or used-up host tickets; those strings were checked only by reading `src/lib/event-guests.ts` (010).
 
 ## Conventions not visible in the code
 
@@ -72,5 +73,6 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 - No claude.ai links in PRs or commits.
 - Maestro on iOS: `back` only works on Android, so tap the "Back" header button on iOS (its accessibility label comes from `headerBackTitle: "Back"`). `openLink` shows an "Open in LocalHost?" prompt on iOS; tap "Open" as an optional step (007).
 - Description links come from `tokenizeLinks`, which matches only http(s) and `www.`. Keep it that way, so a description can never open another URL scheme (007).
+- Maestro: the home screen keeps its scroll position after "Back", so after returning, assert on the card you left rather than "My Events" (010).
 - Mock locations should be specific enough for Maps to resolve them: "Williamsburg" alone opens Williamsburg, Virginia (007).
 - The theme is dark-only. When building UI, use the tokens in `src/constants/tokens.js` through Tailwind classes, not hex values.
