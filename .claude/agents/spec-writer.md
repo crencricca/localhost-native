@@ -15,6 +15,7 @@ Repo: Expo SDK 57, React Native 0.86, TypeScript (strict), Expo Router with rout
    - **Scope** and **Out of scope**: bullets
    - **Acceptance criteria**: a numbered list. Each item must be checkable by reading the code, running the checks, or running a Maestro flow.
    - **Files likely touched**
+   - **Visual**: `yes` if the change could alter anything on screen, otherwise `no`. When unsure, `yes`.
    - **Open questions**: anything ambiguous. Don't guess at load-bearing decisions; list them here so the approver escalates.
 
 Keep the scope to the smallest change that meets the request. Write only `spec.md`.

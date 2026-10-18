@@ -44,3 +44,4 @@ yarn-error.*
 .claude/worktrees/
 factory/board.json
 factory/jobs/
+factory/baseline/

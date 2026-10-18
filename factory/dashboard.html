@@ -41,6 +41,8 @@
   .file { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 16px; }
   .file > .path { font: 12px ui-monospace, monospace; color: var(--muted); }
   .file pre { white-space: pre-wrap; background: var(--bg); padding: 8px; border-radius: 6px; font-size: 12px; }
+  .shots { display: grid; grid-template-columns: auto 1fr 1fr; gap: 8px; align-items: start; font-size: 12px; }
+  .shots img { width: 100%; border: 1px solid var(--line); border-radius: 6px; }
   .file h1, .file h2, .file h3 { font-size: 15px; margin: 12px 0 4px; }
 </style>
 </head>
@@ -101,7 +103,10 @@ async function open(id) {
     const res = await fetch(`jobs/${id}/${p}`, { cache: "no-store" }).catch(() => null);
     return res && res.ok ? `<div class="file"><div class="path">${p}</div>${md(await res.text())}</div>` : "";
   }));
-  files.innerHTML = `<h1>${esc(id)}</h1><div class="meta">${esc(job.branch || "")} · ${esc(job.stage)}</div>` + loaded.join("");
+  const shots = (job.shots || []).map(s => `<span>${esc(s)}</span>` + ["before", "after"].map(w =>
+    `<img src="jobs/${esc(id)}/shots/${w}/${esc(s)}.png" alt="${w}" onerror="this.replaceWith('new')">`).join("")).join("");
+  files.innerHTML = `<h1>${esc(id)}</h1><div class="meta">${esc(job.branch || "")} · ${esc(job.stage)}</div>` +
+    (shots ? `<div class="file"><div class="path">screenshots · before / after</div><div class="shots">${shots}</div></div>` : "") + loaded.join("");
   drawer.classList.add("open");
 }
 
