@@ -27,7 +27,7 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 **Event detail** (`/event/[id]`)
 - Every home-screen card opens it. The route itself checks `eventIsVisibleToUser` and shows nothing about an event the user can't see, since a deep link can reach any id (007).
 - Maps opens the platform's own app: Apple Maps on iOS, the default `geo:` app on Android. Google Maps on iOS would open a browser tab when its app isn't installed (007).
-- "Add to calendar" opens a Google Calendar template URL and is hidden for past events. Writing to the device calendar would need `expo-calendar` and a permission prompt, so it's deferred (007).
+- "Add to calendar" is hidden for past events. On iOS and Android it opens the system New Event sheet for the device's default calendar app (`createEventInCalendarAsync` from `expo-calendar/legacy`), with no permission prompt and no confirmation afterwards; there is no visible Google option on native. Google Calendar's template URL is used on web and as the fallback when the native sheet fails. Events with no time are added as all-day. Never call a calendar permission or read API: the app only uses the system sheet. The plugin is in `app.json` with a write-only usage string for App Store review, and Android's calendar permissions are blocked (007, 011).
 - Guest section: "Going (n/capacity)" never counts the host, and the host is not a row in it ("Hosted by" names them). Only attendees (host or `confirmed`) see who is going; everyone else who can see the event sees the count, spots left and host tickets but no names, so real names on public events don't reach strangers. "Interested" means `requested` guests and only the host sees it. `invited` and `declined` guests are shown to no one yet. Past events keep Going as a record and hide spots left and tickets. These rules live in `src/lib/event-guests.ts` (010).
 
 **Creating and editing events**
@@ -62,7 +62,7 @@ Port the event-planner web app (`~/Developer/event-planner`) to this Expo app. T
 - The form's Save button is disabled without saying why, and the home header row ("My Events" + "New event") may crowd at large text sizes (008).
 - The home feed doesn't apply `eventIsVisibleToUser` yet; only the detail route does. An `invite_only` event the user isn't on would show in the feed (005, 007).
 - The detail route shows different messages for "Event not found" and "no access", so a user can tell that an event id exists. Merge them once real data arrives (007).
-- "Add to calendar" sends an event's title, time, description and location to Google, and Maps sends the location to Apple. Check that this is acceptable for `invite_only` events once data is real (007).
+- Maps sends an event's location to Apple, and the Google Calendar fallback (web, or a failed native sheet) sends the title, time, description and location to Google. Check that this is acceptable for `invite_only` events once data is real (007, 011).
 - Visibility and feed filtering only happens on the client, and the full `guests` array reaches the client. The guest section hides names on screen only, so it gives no real privacy until the server filters. Once there's a backend, the server must apply the visibility and guest-section rules, and host lookups should return only the id and names (010).
 - No mock event shows "Full", "1 spot left", unlimited capacity in the guest section, or used-up host tickets; those strings were checked only by reading `src/lib/event-guests.ts` (010).
 

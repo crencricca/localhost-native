@@ -12,7 +12,7 @@
 - [x] Add a create/edit event modal route with native date and time pickers. Decide what happens to pending `requested` guests when a host changes an event's `access` to `invite_only` (for example decline them, or block the change until they're resolved) (008-event-form)
 - [x] Decide whether `EventCard` should still show the "Past" chip inside the Past Events section, where the heading already says it (kept for now in 006-past-events) (009-past-chip)
 - [x] Add a guest list and capacity section to the event detail screen (Interested / Going lists, "Going (n/capacity)", spots left, host tickets). Decide which guests a viewer may see and whether the count includes the host (deferred in 007-event-detail) (010-guest-list)
-- [ ] Optionally add events to the device calendar with `expo-calendar` instead of the Google Calendar link (deferred in 007-event-detail)
+- [x] Optionally add events to the device calendar with `expo-calendar` instead of the Google Calendar link (deferred in 007-event-detail) (011-device-calendar)
 - [ ] Touch targets and press feedback: give inline description links a 44 pt hit area (for example as separate pressable rows), add `min-w-11` to the detail screen's Maps control, and add pressed-state feedback to `EventCard` (accepted as-is in 007-event-detail)
 - [ ] Invite guests to an event from the event form or guest list, so new `invite_only` events can have guests (deferred in 008-event-form)
 - [ ] Default the event form's time to the next full hour instead of 18:00 (10:17 pm → 11:00 pm), as Apple Calendar does. After 11 pm the next hour is tomorrow, so roll the date forward to the next day (user decision)
