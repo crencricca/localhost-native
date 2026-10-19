@@ -6,11 +6,11 @@ import {
 } from "@/lib/event-date";
 
 /** Default length for timed events when only a start time is stored. */
-const DEFAULT_DURATION_MS = 60 * 60 * 1000;
+export const DEFAULT_DURATION_MS = 60 * 60 * 1000;
 
 const ISO_DATE_KEY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-function isValidClockTimeKey(time: string): boolean {
+export function isValidClockTimeKey(time: string): boolean {
   if (!EVENT_TIME_KEY_REGEX.test(time)) {
     return false;
   }

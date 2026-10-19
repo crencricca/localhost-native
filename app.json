@@ -21,7 +21,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +40,15 @@
           "backgroundColor": "#191724",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "LocalHost adds events you choose to your calendar.",
+          "writeOnlyCalendarPermission": "LocalHost adds events you choose to your calendar.",
+          "writeOnlyAccess": true,
+          "remindersPermission": false
         }
       ]
     ],
