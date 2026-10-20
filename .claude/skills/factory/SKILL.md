@@ -50,7 +50,7 @@ The stage is one of `spec`, `spec-review`, `build`, `review`, `approval`, `needs
 
 Leave out acceptance criteria, file lists, test logs, review verdicts and helper-by-helper details. The diff and the job folder already have them.
 
-**Merge.** Run `gh pr checks <pr> --watch`. If CI fails, run `/factory rework <id> Fix CI: <failing check>` instead of merging. Otherwise run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged` and rebuild the baseline (below). Then add anything new from `build.md`, the reviews or `decision.md` to the Open questions and Known gaps sections of `factory/context.md`, and remove what this job closed.
+**Merge.** Run `gh pr checks <pr> --watch`. If CI fails, run `/factory rework <id> Fix CI: <failing check>` instead of merging. Otherwise run `git worktree remove .claude/worktrees/<id>` (the branch can't be deleted while a worktree holds it), then `gh pr merge <pr> --squash --subject "<title> (#<n>)" --delete-branch` and `git pull --ff-only origin main`. Set the stage to `merged` and `merged_at` to the current ISO time, then rebuild the baseline (below). Then add anything new from `build.md`, the reviews or `decision.md` to the Open questions and Known gaps sections of `factory/context.md`, and remove what this job closed.
 
 **Conflicts.** If `gh pr merge` fails on a conflict, run `/factory rework <id> Merge origin/main and resolve the conflicts`. After every successful merge, check each other job with an open PR using `gh pr view <pr> --json mergeable`, and rework every one that says `CONFLICTING` the same way.
 
