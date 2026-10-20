@@ -8,6 +8,7 @@
     "@expo-google-fonts/space-grotesk": "^0.4.1",
     "@expo/ui": "~57.0.25",
     "expo": "~57.0.30",
+    "expo-calendar": "~57.0.5",
     "expo-constants": "~57.0.22",
     "expo-dev-client": "~57.0.20",
     "expo-device": "~57.0.2",

@@ -1,5 +1,7 @@
+import { createEventInCalendarAsync } from "expo-calendar/legacy";
 import * as Linking from "expo-linking";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import { useRef } from "react";
 import {
   Alert,
   Platform,
@@ -13,6 +15,7 @@ import { chipClassName } from "@/components/EventCard/EventCard";
 import type { Event } from "@/constants/event";
 import type { Guest } from "@/constants/guest";
 import { Shadows } from "@/constants/theme";
+import { buildDeviceCalendarEvent } from "@/lib/device-calendar-event";
 import { formatEventDateTime, isEventExpired } from "@/lib/event-date";
 import {
   formatGoingHeading,
@@ -36,6 +39,15 @@ import { useEvent } from "@/state/events";
 
 function openUrl(url: string, failureMessage: string) {
   Linking.openURL(url).catch(() => Alert.alert(failureMessage));
+}
+
+// iOS rejects with this code when another calendar sheet is already open.
+function isDialogInProgressError(error: unknown) {
+  return (
+    error instanceof Error &&
+    "code" in error &&
+    error.code === "ERR_EVENT_DIALOG_IN_PROGRESS"
+  );
 }
 
 export default function EventDetail() {
@@ -92,15 +104,42 @@ function EventDetails({ event }: { event: Event }) {
   const dateTime = formatEventDateTime(event.date, event.time);
   const hostLabel = formatHostLabel(getUserById(event.hostId));
   const mapsUrl = buildNativeMapsUrl(event.location, Platform.OS);
+  const calendarInput = {
+    title: event.title,
+    date: event.date,
+    time: event.time,
+    description: event.description,
+    location: event.location,
+  };
   const calendarUrl = isPast
     ? null
-    : buildGoogleCalendarRenderUrl({
-        title: event.title,
-        date: event.date,
-        time: event.time,
-        description: event.description,
-        location: event.location,
+    : buildGoogleCalendarRenderUrl(calendarInput);
+  const calendarEvent = isPast ? null : buildDeviceCalendarEvent(calendarInput);
+  const calendarSheetOpen = useRef(false);
+
+  // Native opens the system New Event sheet; web, or a failed sheet, uses the Google link.
+  function addToCalendar(url: string) {
+    if (
+      (Platform.OS !== "ios" && Platform.OS !== "android") ||
+      !calendarEvent
+    ) {
+      openUrl(url, "Couldn't open Google Calendar");
+      return;
+    }
+    if (calendarSheetOpen.current) {
+      return;
+    }
+    calendarSheetOpen.current = true;
+    createEventInCalendarAsync(calendarEvent)
+      .catch((error: unknown) => {
+        if (!isDialogInProgressError(error)) {
+          openUrl(url, "Couldn't open Google Calendar");
+        }
+      })
+      .finally(() => {
+        calendarSheetOpen.current = false;
       });
+  }
 
   return (
     <View className="gap-4">
@@ -166,9 +205,7 @@ function EventDetails({ event }: { event: Event }) {
             accessibilityLabel="Add to calendar"
             className="mt-2 min-h-11 items-center justify-center rounded-card border-card border-ink bg-accent px-4 py-2"
             style={{ boxShadow: Shadows.hard }}
-            onPress={() =>
-              openUrl(calendarUrl, "Couldn't open Google Calendar")
-            }
+            onPress={() => addToCalendar(calendarUrl)}
           >
             <Text className="font-sans-700 text-base uppercase text-accentFg">
               Add to calendar
